@@ -1,4 +1,4 @@
-package ttud.buoi9;
+package ttud.buoi9.huffman;
 
 import edu.princeton.cs.algs4.BinaryStdIn;
 import edu.princeton.cs.algs4.BinaryStdOut;
@@ -148,7 +148,7 @@ public class Huffman {
 
 
     public static void main(String[] args) throws FileNotFoundException {
-        String basePath = "src/main/java/ttud/buoi9/";
+        String basePath = "src/main/java/ttud/buoi9/huffman/";
         String inputFileName = basePath + "tinytinyTale.txt"; // File text gốc
         String compressedFileName = basePath + "dulieu_nen.bin"; // File kết quả nén
 
