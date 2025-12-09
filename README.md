@@ -7,5 +7,4 @@ của Robert Sedgewick và Kevin Wayne.
 
 |  STT   | Chương  | Thuật toán / Lớp                | Mô tả                                                                                      | Trạng thái hoàn thành |
 |:------:|:-------:|:--------------------------------|:-------------------------------------------------------------------------------------------|:---------------------:|
-| **27** |    -    | `KDTree`                        | Tìm các điểm nằm trong một hình chữ nhật và tìm điểm gần nhất bằng 2D-Tree.                |           ✅           |
 | **29** |    -    | `RectangleIntersection`         | Tìm các cặp hình chữ nhật giao nhau.                                                       |           ❌           |
