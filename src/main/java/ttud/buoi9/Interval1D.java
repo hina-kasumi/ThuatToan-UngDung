@@ -2,7 +2,7 @@ package ttud.buoi9;
 
 import java.util.Comparator;
 
-public class Interval1D {
+public class Interval1D implements Comparable<Interval1D> {
     public static final Comparator<Interval1D> MIN_ENDPOINT_ORDER = new MinEndpointComparator();
 
     /**
@@ -15,14 +15,13 @@ public class Interval1D {
      */
     public static final Comparator<Interval1D> LENGTH_ORDER = new LengthComparator();
 
-    private final double min;
-    private final double max;
+    public final double min;
+    public final double max;
 
     public Interval1D(double min, double max) {
         if (Double.isInfinite(min) || Double.isInfinite(max))
             throw new IllegalArgumentException("Endpoints must be finite");
-        if (Double.isNaN(min) || Double.isNaN(max))
-            throw new IllegalArgumentException("Endpoints cannot be NaN");
+        if (Double.isNaN(min) || Double.isNaN(max)) throw new IllegalArgumentException("Endpoints cannot be NaN");
 
         // convert -0.0 to +0.0
         if (min == 0.0) min = 0.0;
@@ -76,6 +75,13 @@ public class Interval1D {
         int hash1 = ((Double) min).hashCode();
         int hash2 = ((Double) max).hashCode();
         return 31 * hash1 + hash2;
+    }
+
+    @Override
+    public int compareTo(Interval1D o) {
+        if (this.min < o.min) return -1;
+        else if (this.min > o.min) return +1;
+        else return Double.compare(this.max, o.max);
     }
 
     // ascending order of min endpoint, breaking ties by max endpoint
