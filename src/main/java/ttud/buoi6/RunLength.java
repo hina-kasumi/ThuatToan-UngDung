@@ -44,8 +44,12 @@ public class RunLength {
     }
 
     public static void main(String[] args) {
+        compress(
+                "src/main/java/ttud/buoi6/files/origin.txt",
+                "src/main/java/ttud/buoi6/files/compressed.txt"
+        );
         expand(
-                "src/main/java/ttud/buoi6/files/q32x48.bin",
+                "src/main/java/ttud/buoi6/files/compressed.txt",
                 "src/main/java/ttud/buoi6/files/expanded.txt"
         );
     }

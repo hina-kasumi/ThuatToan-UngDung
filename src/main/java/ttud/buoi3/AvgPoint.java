@@ -28,5 +28,6 @@ public class AvgPoint {
         }
         avg /= names.size();
         System.out.println(avg);
+        System.out.println(tst.keysWithPrefix("Trịnh Tiến Đạt"));
     }
 }

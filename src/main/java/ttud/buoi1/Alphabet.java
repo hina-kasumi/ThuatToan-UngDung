@@ -1,5 +1,15 @@
 package ttud.buoi1;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 public class Alphabet {
     public static final Alphabet BINARY = new Alphabet("01");
 
@@ -27,6 +37,28 @@ public class Alphabet {
     public static final Alphabet EXTENDED_ASCII = new Alphabet(256);
 
     public static final Alphabet UNICODE16 = new Alphabet(65536);
+
+    public static final Alphabet VIETNAMESE = new Alphabet(
+            " " + // Dấu cách (Space) xếp đầu tiên để tách tên đệm/tên chính xác
+                    "AaÀàÁáẢảÃãẠạ" +
+                    "ĂăẰằẮắẲẳẴẵẶặ" +
+                    "ÂâẦầẤấẨẩẪẫẬậ" +
+                    "BbCcDdĐđ" +
+                    "EeÈèÉéẺẻẼẽẸẹ" +
+                    "ÊêỀềẾếỂểỄễỆệ" +
+                    "GgHh" +
+                    "IiÌìÍíỈỉĨĩỊị" +
+                    "KkLlMmNn" +
+                    "OoÒòÓóỎỏÕõỌọ" +
+                    "ÔôỒồỐốỔổỖỗỘộ" +
+                    "ƠơỜờỚớỞởỠỡỢợ" +
+                    "PpQqRrSsTt" +
+                    "UuÙùÚúỦủŨũỤụ" +
+                    "ƯưỪừỨứỬửỮữỰự" +
+                    "VvXx" +
+                    "YyỲỳÝýỶỷỸỹỴỵ" +
+                    "0123456789"
+    );
 
     private char[] alphabet; // the characters in the alphabet
     private int[] inverse; // indices
@@ -113,21 +145,90 @@ public class Alphabet {
         return s.toString();
     }
 
+    public static class VietnameseNameComparator implements Comparator<String> {
+
+        @Override
+        public int compare(String line1, String line2) {
+            String name1 = getNameFromLine(line1);
+            String name2 = getNameFromLine(line2);
+
+            int result = compareBasedOnAlphabet(name1, name2);
+
+            if (result == 0) {
+                return compareBasedOnAlphabet(line1, line2);
+            }
+            return result;
+        }
+
+        /**
+         * Hàm trích xuất Tên từ dòng chứa "Họ Tên MãSV"
+         */
+        private String getNameFromLine(String line) {
+            if (line == null || line.trim().isEmpty()) return "";
+
+            String[] parts = line.trim().split("\\s+");
+
+            if (parts.length < 2) {
+                return parts[0];
+            }
+
+            return parts[parts.length - 2];
+        }
+
+        private int compareBasedOnAlphabet(String s1, String s2) {
+            int n1 = s1.length();
+            int n2 = s2.length();
+            int min = Math.min(n1, n2);
+
+            for (int i = 0; i < min; i++) {
+                char c1 = s1.charAt(i);
+                char c2 = s2.charAt(i);
+                if (c1 != c2) {
+                    int idx1 = VIETNAMESE.toIndex(c1);
+                    int idx2 = VIETNAMESE.toIndex(c2);
+
+                    if (idx1 != -1 && idx2 != -1) {
+                        return idx1 - idx2;
+                    }
+                    else {
+                        return c1 - c2;
+                    }
+                }
+            }
+            return n1 - n2;
+        }
+    }
+
     public static void main(String[] args) {
-        int[]  encoded1 = Alphabet.BASE64.toIndices("NowIsTheTimeForAllGoodMen");
-        String decoded1 = Alphabet.BASE64.toChars(encoded1);
-        System.out.println(decoded1);
+        String filePath = "src/main/java/ttud/buoi1/VNstudents.txt";
+        List<String> studentNames = new ArrayList<>();
 
-        int[]  encoded2 = Alphabet.DNA.toIndices("AACGAACGGTTTACCCCG");
-        String decoded2 = Alphabet.DNA.toChars(encoded2);
-        System.out.println(decoded2);
+        File file = new File(filePath);
+        if (!file.exists()) {
+            System.err.println("Lỗi: Không tìm thấy file tại " + file.getAbsolutePath());
+        } else {
+            try (BufferedReader br = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    if (!line.trim().isEmpty()) {
+                        studentNames.add(line.trim());
+                    }
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
-        int[]  encoded3 = Alphabet.DECIMAL.toIndices("01234567890123456789");
-        String decoded3 = Alphabet.DECIMAL.toChars(encoded3);
-        System.out.println(decoded3);
+        System.out.println("--- Danh sách ban đầu ---");
+        for (String name : studentNames) {
+            System.out.println(name);
+        }
 
-        int[]  encoded5 = Alphabet.UNICODE16.toIndices("a ă â b c d đ\ne ê g h i k l\nm n o ô ơ p q\nr s t u ư v y");
-        String decoded5 = Alphabet.UNICODE16.toChars(encoded5);
-        System.out.println(decoded5);
+        studentNames.sort(new VietnameseNameComparator());
+
+        System.out.println("\n--- Danh sách sau khi sắp xếp Tiếng Việt ---");
+        for (String name : studentNames) {
+            System.out.println(name);
+        }
     }
 }
